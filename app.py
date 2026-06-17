@@ -10,20 +10,33 @@ from nltk.tokenize import word_tokenize
 
 app = Flask(__name__)
 
-# NLTK downloads (safe mode)
-nltk.download('punkt')
-nltk.download('stopwords')
+# ==============================
+# NLTK SAFE DOWNLOAD (IMPORTANT)
+# ==============================
+try:
+    nltk.data.find('tokenizers/punkt_tab')
+except:
+    nltk.download('punkt_tab')
+
+try:
+    nltk.data.find('corpora/stopwords')
+except:
+    nltk.download('stopwords')
 
 stop_words = set(stopwords.words('english'))
 
-# Load FAQ data
+# ==============================
+# LOAD FAQ DATA
+# ==============================
 with open("faq_data.json", "r") as file:
     faqs = json.load(file)
 
 questions = list(faqs.keys())
 answers = list(faqs.values())
 
-# Preprocess function
+# ==============================
+# TEXT PREPROCESSING
+# ==============================
 def preprocess(text):
     text = text.lower()
     text = text.translate(str.maketrans('', '', string.punctuation))
@@ -31,10 +44,11 @@ def preprocess(text):
     tokens = [word for word in tokens if word not in stop_words]
     return " ".join(tokens)
 
-# Preprocess FAQs
+# ==============================
+# TF-IDF MODEL
+# ==============================
 processed_questions = [preprocess(q) for q in questions]
 
-# TF-IDF model
 vectorizer = TfidfVectorizer()
 faq_vectors = vectorizer.fit_transform(processed_questions)
 
@@ -52,19 +66,22 @@ def get_answer(user_input):
 
     return answers[index]
 
-# Home route
+# ==============================
+# ROUTES
+# ==============================
 @app.route("/")
 def home():
     return render_template("index.html")
 
-# Chat route
 @app.route("/get")
 def chat():
     user_message = request.args.get("msg")
     response = get_answer(user_message)
     return jsonify({"answer": response})
 
-# Run app (Railway compatible)
+# ==============================
+# RUN (RAILWAY READY)
+# ==============================
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
