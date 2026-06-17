@@ -1,10 +1,6 @@
-import nltk
-nltk.download('punkt')
-nltk.download('stopwords')
-import nltk
-nltk.download('punkt')
-nltk.download('stopwords')import json
+import json
 import string
+import os
 import nltk
 from flask import Flask, render_template, request, jsonify
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -68,10 +64,7 @@ def chat():
     response = get_answer(user_message)
     return jsonify({"answer": response})
 
-if __name__ == "__main__":
-    app.run(debug=True)
-   import os
-
+# Run app (Railway compatible)
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
