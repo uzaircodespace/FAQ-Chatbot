@@ -1,4 +1,9 @@
-import json
+import nltk
+nltk.download('punkt')
+nltk.download('stopwords')
+import nltk
+nltk.download('punkt')
+nltk.download('stopwords')import json
 import string
 import nltk
 from flask import Flask, render_template, request, jsonify
@@ -65,3 +70,8 @@ def chat():
 
 if __name__ == "__main__":
     app.run(debug=True)
+    import os
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
